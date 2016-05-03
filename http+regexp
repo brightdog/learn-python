@@ -1,0 +1,53 @@
+# python3.5 爬虫教程
+# 一个简单的示例爬虫
+# 林炳文Evankaka(博客：http://blog.csdn.net/evankaka/)
+# modify by wulf 20160503
+import urllib.request as xxx
+import re
+
+
+
+def convertCRLF(s):
+        s = s.replace('\r', '')
+        s = s.replace('\n', '')
+        return s
+
+def saveFile(data):
+    save_path = 'D:\\temp.out'
+    f_obj = open(save_path, 'wb')  # wb 表示打开方式
+    f_obj.write(data)
+    f_obj.close()
+
+
+weburl = "https://www.elastic.co/"
+webheader1 = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
+webheader2 = {
+    'Connection': 'Keep-Alive',
+    'Accept': 'text/html, application/xhtml+xml, */*',
+    'Accept-Language': 'en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.3',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
+    # 'Accept-Encoding': 'gzip, deflate',
+    'Host': 'www.elastic.co',
+    'DNT': '1'
+}
+req = xxx.Request(url=weburl, headers=webheader2)
+webPage = xxx.urlopen(req)
+strHTML = webPage.read()
+saveFile(strHTML)  # 将data变量保存到 D 盘下
+strHTML = strHTML.decode('UTF-8')
+print("strHTML=\r\n" + strHTML)
+print("type(webPage)=" + type(webPage).__name__)
+print("webPage.geturl()=" + webPage.geturl())
+print("webPage.info()=\r\n" )
+print(webPage.info())
+print("webPage.getcode()=" + str(webPage.getcode()))
+print("===================================")
+strHTML = convertCRLF(strHTML)
+pattern = re.compile(r".*?<title>(.*?)</title>", re.I | re.M | re.S)
+m = pattern.match(strHTML)
+#print(strHTML)
+print("Title=" + m.group(1))
+pattern = re.compile(r".*?<a.*?href=\"([^\"]+)\".*?>(.*?)</a>",  re.I | re.M | re.S)
+m = pattern.findall(strHTML)
+print("HREF List:" + '=====================')
+print(m)
